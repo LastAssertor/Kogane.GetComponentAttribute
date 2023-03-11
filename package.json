@@ -1,7 +1,8 @@
 {
-    "name": "com.baba-s.kogane-get-component-attribute",
-    "displayName": "Kogane Get Component Attribute",
-    "version": "1.0.0",
-    "unity": "2022.1",
-    "author": "baba-s"
+  "name": "com.baba-s.kogane-get-component-attribute",
+  "displayName": "Kogane Get Component Attribute",
+  "version": "1.0.0",
+  "unity": "2022.1",
+  "author": "baba-s",
+  "description": "\u3010Unity\u3011\u30b7\u30ea\u30a2\u30e9\u30a4\u30ba\u5bfe\u8c61\u306e\u5909\u6570\u306b\u81ea\u52d5\u3067\u53c2\u7167\u3092\u5272\u308a\u5f53\u3066\u308b\u30a8\u30c7\u30a3\u30bf\u62e1\u5f35"
 }
