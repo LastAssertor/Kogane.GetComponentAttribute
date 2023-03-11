@@ -1,8 +1,10 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
+
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.SceneManagement;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,10 +21,10 @@ namespace Kogane.Internal
         /// <summary>
         /// MonoBehaviour のコンテキストメニューから参照を割り当てます
         /// </summary>
-        [MenuItem( "CONTEXT/MonoBehaviour/Get Component Attribute/Inject" )]
-        private static void InjectFromContextMenu( MenuCommand menuCommand )
+        [MenuItem("CONTEXT/MonoBehaviour/Get Component Attribute/Inject")]
+        private static void InjectFromContextMenu(MenuCommand menuCommand)
         {
-            Inject( menuCommand.context as MonoBehaviour, true );
+            Inject(menuCommand.context as MonoBehaviour, true);
         }
 
         /// <summary>
@@ -31,108 +33,108 @@ namespace Kogane.Internal
         [DidReloadScripts]
         private static void OnReloadScripts()
         {
-            EditorSceneManager.sceneOpened         += OnSceneOpened;
-            EditorSceneManager.sceneSaving         += OnSceneSaving;
-            PrefabStage.prefabStageOpened          += OnPrefabStageOpened;
-            PrefabStage.prefabSaving               += OnPrefabSaving;
-            ObjectFactory.componentWasAdded        += OnComponentWasAdded;
+            EditorSceneManager.sceneOpened += OnSceneOpened;
+            EditorSceneManager.sceneSaving += OnSceneSaving;
+            PrefabStage.prefabStageOpened += OnPrefabStageOpened;
+            PrefabStage.prefabSaving += OnPrefabSaving;
+            ObjectFactory.componentWasAdded += OnComponentWasAdded;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
-            InjectAll( true );
+            InjectAll(true);
         }
 
         /// <summary>
         /// シーンファイルを開いた時に参照を割り当てます
         /// </summary>
-        private static void OnSceneOpened( Scene scene, OpenSceneMode mode )
+        private static void OnSceneOpened(Scene scene, OpenSceneMode mode)
         {
-            if ( EditorApplication.isPlaying ) return;
-            InjectAll( true );
+            if (EditorApplication.isPlaying) return;
+            InjectAll(true);
         }
 
         /// <summary>
         /// シーンファイルを保存する時に参照を割り当てます
         /// </summary>
-        private static void OnSceneSaving( Scene scene, string path )
+        private static void OnSceneSaving(Scene scene, string path)
         {
-            if ( EditorApplication.isPlaying ) return;
-            InjectAll( false );
+            if (EditorApplication.isPlaying) return;
+            InjectAll(false);
         }
 
         /// <summary>
         /// プレハブステージを開いた時に参照を割り当てます
         /// </summary>
-        private static void OnPrefabStageOpened( PrefabStage prefabStage )
+        private static void OnPrefabStageOpened(PrefabStage prefabStage)
         {
-            if ( EditorApplication.isPlaying ) return;
-            InjectAll( true );
+            if (EditorApplication.isPlaying) return;
+            InjectAll(true);
         }
 
         /// <summary>
         /// プレハブを保存する時に参照を割り当てます
         /// </summary>
-        private static void OnPrefabSaving( GameObject prefab )
+        private static void OnPrefabSaving(GameObject prefab)
         {
-            if ( EditorApplication.isPlaying ) return;
-            InjectAll( false );
+            if (EditorApplication.isPlaying) return;
+            InjectAll(false);
         }
 
         /// <summary>
         /// コンポーネントがアタッチされた時に参照を割り当てます
         /// </summary>
-        private static void OnComponentWasAdded( Component component )
+        private static void OnComponentWasAdded(Component component)
         {
-            if ( EditorApplication.isPlaying ) return;
-            InjectAll( true );
+            if (EditorApplication.isPlaying) return;
+            InjectAll(true);
         }
 
         /// <summary>
         /// Unity を再生する時に参照を割り当てます
         /// </summary>
-        private static void OnPlayModeStateChanged( PlayModeStateChange change )
+        private static void OnPlayModeStateChanged(PlayModeStateChange change)
         {
-            if ( change != PlayModeStateChange.ExitingEditMode ) return;
-            InjectAll( true );
+            if (change != PlayModeStateChange.ExitingEditMode) return;
+            InjectAll(true);
         }
 
         /// <summary>
         /// シーンに存在するすべての MonoBehaviour の
         /// GetComponentAttribute 付きの変数に参照を割り当てます
         /// </summary>
-        private static void InjectAll( bool canUndo )
+        private static void InjectAll(bool canUndo)
         {
-            if ( EditorApplication.isPlaying ) return;
+            if (EditorApplication.isPlaying) return;
 
-            foreach ( var monoBehaviour in GetAllMonoBehaviour() )
+            foreach (var monoBehaviour in GetAllMonoBehaviour())
             {
-                Inject( monoBehaviour, canUndo );
+                Inject(monoBehaviour, canUndo);
             }
         }
 
         /// <summary>
         /// 指定された MonoBehaviour が持つ GetComponentAttribute 付きの変数に参照を割り当てます
         /// </summary>
-        private static void Inject( MonoBehaviour monoBehaviour, bool canUndo )
+        private static void Inject(MonoBehaviour monoBehaviour, bool canUndo)
         {
-            var serializedObject = new SerializedObject( monoBehaviour );
-            var type             = monoBehaviour.GetType();
-            var fieldInfos       = type.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic );
+            var serializedObject = new SerializedObject(monoBehaviour);
+            var type = monoBehaviour.GetType();
+            var fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            foreach ( var fieldInfo in fieldInfos )
+            foreach (var fieldInfo in fieldInfos)
             {
                 var attribute = fieldInfo
                         .GetCustomAttributes()
                         .OfType<IGetComponentAttribute>()
                         .FirstOrDefault()
                     ;
-                if ( attribute == null ) continue;
+                if (attribute == null) continue;
 
-                var fieldName          = fieldInfo.Name;
-                var serializedProperty = serializedObject.FindProperty( fieldName );
+                var fieldName = fieldInfo.Name;
+                var serializedProperty = serializedObject.FindProperty(fieldName);
 
-                attribute.Inject( monoBehaviour, fieldInfo, serializedProperty );
+                attribute.Inject(monoBehaviour, fieldInfo, serializedProperty);
             }
 
-            if ( canUndo )
+            if (canUndo)
             {
                 serializedObject.ApplyModifiedProperties();
             }
@@ -149,9 +151,9 @@ namespace Kogane.Internal
         {
             return Resources
                     .FindObjectsOfTypeAll<MonoBehaviour>()
-                    .Where( x => x.gameObject.scene.isLoaded )
-                    .Where( x => x.gameObject.hideFlags == HideFlags.None )
-                    .Where( x => PrefabUtility.GetPrefabAssetType( x.gameObject ) == PrefabAssetType.NotAPrefab )
+                    .Where(x => x.gameObject.scene.isLoaded)
+                    .Where(x => x.gameObject.hideFlags == HideFlags.None)
+                    .Where(x => PrefabUtility.GetPrefabAssetType(x.gameObject) == PrefabAssetType.NotAPrefab)
                     .ToArray()
                 ;
         }
