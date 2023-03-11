@@ -18,6 +18,17 @@ namespace Kogane
         : Attribute,
           IGetComponentAttribute
     {
+        private readonly bool m_includeInactive;
+
+        public GetComponentInParentAttribute() : this(true)
+        {
+        }
+
+        public GetComponentInParentAttribute(bool includeInactive)
+        {
+            m_includeInactive = includeInactive;
+        }
+
         //================================================================================
         // 関数
         //================================================================================
@@ -38,7 +49,7 @@ namespace Kogane
             }
 
             serializedProperty.objectReferenceValue =
-                monoBehaviour.GetComponentInParent(fieldInfo.FieldType);
+                monoBehaviour.GetComponentInParent(fieldInfo.FieldType, m_includeInactive);
         }
 #endif
     }
