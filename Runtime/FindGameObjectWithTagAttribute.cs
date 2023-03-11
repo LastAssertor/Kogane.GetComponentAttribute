@@ -14,7 +14,7 @@ namespace Kogane
     /// </summary>
     [Conditional("UNITY_EDITOR")]
     [AttributeUsage(AttributeTargets.Field)]
-    public sealed class FindWithTagAttribute
+    public sealed class FindGameObjectWithTagAttribute
         : Attribute,
           IGetComponentAttribute
     {
@@ -29,7 +29,7 @@ namespace Kogane
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public FindWithTagAttribute(string tag)
+        public FindGameObjectWithTagAttribute(string tag)
         {
             m_tag = tag;
         }
