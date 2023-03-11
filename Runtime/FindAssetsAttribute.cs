@@ -34,17 +34,45 @@ namespace Kogane
             SerializedProperty serializedProperty
         )
         {
-            var guid = AssetDatabase
-                    .FindAssets($"t:{fieldInfo.FieldType.Name}")
-                    .FirstOrDefault()
-                ;
+            var fieldType = fieldInfo.FieldType;
 
-            if (string.IsNullOrWhiteSpace(guid)) return;
+            if (!serializedProperty.isArray)
+            {
+                var guid = AssetDatabase.FindAssets($"t:{fieldType.Name}").FirstOrDefault();
 
-            var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                if (string.IsNullOrEmpty(guid))
+                {
+                    return;
+                }
 
-            serializedProperty.objectReferenceValue = asset;
+                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                var asset = AssetDatabase.LoadAssetAtPath(assetPath, fieldType);
+
+                serializedProperty.objectReferenceValue = asset;
+                return;
+            }
+
+            var elementType = fieldType.GetElementType() ?? fieldType.GetGenericArguments().SingleOrDefault();
+
+            var guids = AssetDatabase.FindAssets($"t:{elementType.Name}");
+
+            var len = guids.Length;
+
+            serializedProperty.arraySize = len;
+
+            if (len == 0)
+            {
+                return;
+            }
+
+            var assets = guids.ToList().ConvertAll(x => AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(x), elementType));
+
+            for (var i = 0; i < len; i++)
+            {
+                var element = serializedProperty.GetArrayElementAtIndex(i);
+
+                element.objectReferenceValue = assets[i];
+            }
         }
 #endif
     }
