@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using UnityEngine;
+using System.Diagnostics;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -11,6 +12,7 @@ namespace Kogane
     /// <summary>
     /// GameObject.Find を実行する Attribute
     /// </summary>
+    [Conditional("UNITY_EDITOR")]
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class FindAttribute
         : Attribute,

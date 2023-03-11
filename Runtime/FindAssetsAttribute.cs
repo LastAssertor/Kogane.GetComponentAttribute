@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using System.Diagnostics;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -13,6 +14,7 @@ namespace Kogane
     /// <summary>
     /// AssetDatabase.FindAssets を実行する Attribute
     /// </summary>
+    [Conditional("UNITY_EDITOR")]
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class FindAssetsAttribute
         : Attribute,

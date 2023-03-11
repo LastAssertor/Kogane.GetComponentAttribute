@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using System.Linq;
+using System.Diagnostics;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -13,6 +14,7 @@ namespace Kogane
     /// <summary>
     /// Object.FindObjectsOfType を実行する Attribute
     /// </summary>
+    [Conditional("UNITY_EDITOR")]
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class FindObjectsOfTypeAttribute
         : Attribute,
