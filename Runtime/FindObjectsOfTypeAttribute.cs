@@ -3,6 +3,8 @@ using System.Reflection;
 using UnityEngine;
 using System.Linq;
 using System.Diagnostics;
+using System.Collections.Generic;
+using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -62,15 +64,23 @@ namespace Kogane
             }
 
             var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage != null)
+            {
+                return;
+            }
+
             var fieldType = fieldInfo.FieldType;
             var elementType = fieldType.GetElementType() ?? fieldType.GetGenericArguments().SingleOrDefault();
 
-            var components = prefabStage != null
-                    ? prefabStage.scene.GetRootGameObjects()[0].GetComponentsInChildren(elementType, m_includeInactive)
-                    : UnityEngine.Object.FindObjectsOfType(elementType, m_includeInactive)
-                ;
+            List<Object> components = new();
 
-            var componentCount = components.Length;
+            foreach (var go in monoBehaviour.gameObject.scene.GetRootGameObjects())
+            {
+
+                components.AddRange(go.GetComponentsInChildren(elementType, m_includeInactive));
+            }
+
+            var componentCount = components.Count;
 
             serializedProperty.arraySize = componentCount;
 

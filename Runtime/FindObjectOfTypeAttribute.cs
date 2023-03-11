@@ -62,12 +62,30 @@ namespace Kogane
             }
 
             var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage != null)
+            {
+                //serializedProperty.objectReferenceValue = prefabStage.scene.GetRootGameObjects()[0].GetComponentInChildren(fieldType, m_includeInactive);
+
+                return;
+            }
+
             var fieldType = fieldInfo.FieldType;
 
-            serializedProperty.objectReferenceValue = prefabStage != null && prefabStage.IsPartOfPrefabContents(monoBehaviour.gameObject)
-                    ? prefabStage.scene.GetRootGameObjects()[0].GetComponentInChildren(fieldType, m_includeInactive)
-                    : Object.FindObjectOfType(fieldType, m_includeInactive)
-                ;
+            Object obj = null;
+
+            foreach (var go in monoBehaviour.gameObject.scene.GetRootGameObjects())
+            {
+
+                obj = go.GetComponentInChildren(fieldType, m_includeInactive);
+
+                if (obj != null)
+                {
+                    break;
+                }
+
+            }
+
+            serializedProperty.objectReferenceValue = obj;
         }
 #endif
     }

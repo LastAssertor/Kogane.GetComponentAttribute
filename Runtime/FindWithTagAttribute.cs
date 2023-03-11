@@ -2,11 +2,11 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using System.Diagnostics;
+using UnityEditor.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
-
 #endif
-
+using System.Linq;
 namespace Kogane
 {
     /// <summary>
@@ -50,7 +50,28 @@ namespace Kogane
                 return;
             }
 
-            serializedProperty.objectReferenceValue = GameObject.FindWithTag(m_tag);
+            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage != null)
+            {
+                return;
+            }
+
+            GameObject result = null;
+
+            foreach (var go in monoBehaviour.gameObject.scene.GetRootGameObjects())
+            {
+                var transforms = go.GetComponentsInChildren<Transform>(true);
+
+                var t = transforms.FirstOrDefault(x => x.CompareTag(m_tag));
+
+                if (t != null)
+                {
+                    result = t.gameObject;
+                    break;
+                }
+            }
+
+            serializedProperty.objectReferenceValue = result;
         }
 #endif
     }

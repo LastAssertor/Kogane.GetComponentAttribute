@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using System.Diagnostics;
+using UnityEditor.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -46,6 +47,12 @@ namespace Kogane
         )
         {
             if (serializedProperty.isArray)
+            {
+                return;
+            }
+
+            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage != null)
             {
                 return;
             }
