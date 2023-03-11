@@ -20,6 +20,14 @@ namespace Kogane
         : Attribute,
           IGetComponentAttribute
     {
+
+        private string[] searchInFolders = new string[0];
+
+        public FindAssetsAttribute(params string[] searchInFolders)
+        {
+            this.searchInFolders = searchInFolders;
+        }
+
         //================================================================================
         // 関数
         //================================================================================
@@ -38,7 +46,7 @@ namespace Kogane
 
             if (!serializedProperty.isArray)
             {
-                var guid = AssetDatabase.FindAssets($"t:{fieldType.Name}").FirstOrDefault();
+                var guid = AssetDatabase.FindAssets($"t:{fieldType.Name}", searchInFolders).FirstOrDefault();
 
                 if (string.IsNullOrEmpty(guid))
                 {
@@ -54,24 +62,20 @@ namespace Kogane
 
             var elementType = fieldType.GetElementType() ?? fieldType.GetGenericArguments().SingleOrDefault();
 
-            var guids = AssetDatabase.FindAssets($"t:{elementType.Name}");
+            var guids = AssetDatabase.FindAssets($"t:{elementType.Name}", searchInFolders);
 
             var len = guids.Length;
 
             serializedProperty.arraySize = len;
 
-            if (len == 0)
-            {
-                return;
-            }
-
-            var assets = guids.ToList().ConvertAll(x => AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(x), elementType));
-
             for (var i = 0; i < len; i++)
             {
                 var element = serializedProperty.GetArrayElementAtIndex(i);
 
-                element.objectReferenceValue = assets[i];
+                var assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                var asset = AssetDatabase.LoadAssetAtPath(assetPath, fieldType);
+
+                element.objectReferenceValue = asset;
             }
         }
 #endif
