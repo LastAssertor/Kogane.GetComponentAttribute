@@ -21,7 +21,7 @@ namespace Kogane
           IGetComponentAttribute
     {
 
-        private string[] searchInFolders = new string[0];
+        private readonly string[] searchInFolders;
 
         public FindAssetsAttribute(params string[] searchInFolders)
         {
