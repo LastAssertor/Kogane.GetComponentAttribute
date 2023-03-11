@@ -73,7 +73,7 @@ namespace Kogane
                 var element = serializedProperty.GetArrayElementAtIndex(i);
 
                 var assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
-                var asset = AssetDatabase.LoadAssetAtPath(assetPath, fieldType);
+                var asset = AssetDatabase.LoadAssetAtPath(assetPath, elementType);
 
                 element.objectReferenceValue = asset;
             }
