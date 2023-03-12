@@ -2,8 +2,8 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using System.Diagnostics;
-using UnityEditor.SceneManagement;
 #if UNITY_EDITOR
+using UnityEditor.SceneManagement;
 using UnityEditor;
 #endif
 using System.Linq;

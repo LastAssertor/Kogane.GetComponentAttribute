@@ -2,10 +2,9 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using System.Diagnostics;
-using UnityEditor.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
-
+using UnityEditor.SceneManagement;
 #endif
 
 namespace Kogane
