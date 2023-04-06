@@ -3,8 +3,8 @@ using System.Reflection;
 using UnityEngine;
 using System.Diagnostics;
 #if UNITY_EDITOR
-using UnityEditor.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 #endif
 using System.Linq;
 namespace Kogane
